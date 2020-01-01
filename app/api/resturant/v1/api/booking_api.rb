@@ -8,24 +8,10 @@ module Resturant::V1::Api::BookingApi
           {shops: shops.map{|s| s.name}}
         end
 
-        get '/:name/operation_times' do
-          wee_date = Date.today.strftime('%u')
-          shops = Shop.includes(:operation_times).where(
-            operation_times: {week_date: wee_date}
-          )
-          response = []
-          shops.each do |shop|
-            operation_times = []
-            shop.operation_times.each do |ot|
-              operation_times
-            end
-            {
-              shop: shop.name,
-              operation_time: [
-                
-              ]
-            }
-          end
+        get '/list/:date' do
+          wee_date = params[:date].to_date.strftime('%u')
+          shops = Shop.includes(:operation_times).select {|s| s.is_available?(wee_date)}
+          {shops: shops.map{|s| s.name}}
         end
       end
     end
